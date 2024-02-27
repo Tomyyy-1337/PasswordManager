@@ -1,9 +1,17 @@
 [package]
-name = "passwort_manager"
+name = "passwort_manager_slint"
 version = "0.1.0"
 authors = ["Tom Paßberg"]
 edition = "2021"
-build = "build.rs"
+build = "src/build.rs"
+
+[lib]
+crate-type = ["lib", "cdylib"]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "todo"
 
 [build-dependencies]
 slint-build = "1.4.1" 

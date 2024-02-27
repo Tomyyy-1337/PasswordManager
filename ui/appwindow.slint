@@ -1,4 +1,4 @@
-import { Button, VerticalBox, LineEdit, HorizontalBox, ListView } from "std-widgets.slint";
+import { Button, VerticalBox, LineEdit, HorizontalBox, ListView, CheckBox, StandardListView } from "std-widgets.slint";
 
 export struct DataItem  {
     platform: string,
@@ -16,12 +16,13 @@ export component AppWindow inherits Window {
             width: 450px;
             height: 600px;
             alignment: center;
-            padding-left: 50px;
-            padding-right: 50px;
+            padding-right: 30px;
+            padding-left: 10px;
             spacing: 30px;
             Text {
                 text: "Neuen Eintrag erstellen";
                 font-size: 30px;
+                height: 60px;
                 horizontal-alignment: center;
             }
 
@@ -38,10 +39,21 @@ export component AppWindow inherits Window {
                 placeholder-text: "Passwort";
             }
 
+            CheckBox {
+                text: "Passwort anzeigen";
+                toggled => {
+                    if (self.checked) {
+                        password_input.input-type = InputType.text;
+                    } else {
+                        password_input.input-type = InputType.password;
+                    }
+                }
+            }
+
             Button {
                 primary: true;
                 text: "Passwort speichern";
-                height: 30px;
+                height: 60px;
                 clicked => {
                     root.add_to_database(platform-input.text, password-input.text);
                     platform-input.text = "";
@@ -55,37 +67,44 @@ export component AppWindow inherits Window {
             spacing: 30px;
             Text {
                 text: "Deine Passwörter";
+                padding-top: 30px;
                 font-size: 30px;
                 horizontal-alignment: center;
             }
             list-view := ListView {
-                for item in root.data_model: HorizontalLayout {
-                    spacing: 10px;
-                    Text { 
-                        text: item.platform;
-                        font-size: 20px; 
-                    }
-                    Button {
-                        text: "Passwort kopieren"; 
-                        width: 150px;
-                        primary: true;
-                        clicked => {
-                            root.copy-password-to-clipboard(item.password);
+                for item in root.data_model: Rectangle {
+                    height: 50px;
+                    HorizontalLayout {
+                        spacing: 10px;
+                        Text { 
+                            width: 210px;
+                            vertical-alignment: center;
+                            text: item.platform;
+                            font-size: 20px; 
                         }
-                    }
-                    Button {
-                        text: "Löschen"; 
-                        width: 100px;
-                        
-                        clicked => {
-                            if (self.text == "Löschen") {
-                                self.text = "Bestätigen"
-                            } else {
-                                root.delete_from_database(item.platform);
+                        Button {
+                            text: "Passwort kopieren"; 
+                            width: 150px;
+                            height: 40px;
+                            primary: true;
+                            clicked => {
+                                root.copy-password-to-clipboard(item.password);
                             }
                         }
-                    }
-                }
+                        Button {
+                            text: "Löschen"; 
+                            width: 100px;
+                            height: 40px;
+                            clicked => {
+                                if (self.text == "Löschen") {
+                                    self.text = "Bestätigen"
+                                } else {
+                                    root.delete_from_database(item.platform);
+                                }
+                            }
+                        }
+                    }    
+                } 
             }   
         }
     }
