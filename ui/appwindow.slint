@@ -14,7 +14,6 @@ export component AppWindow inherits Window {
     HorizontalBox {
         VerticalBox {
             width: 450px;
-            height: 600px;
             alignment: center;
             padding-right: 30px;
             padding-left: 10px;
@@ -22,7 +21,7 @@ export component AppWindow inherits Window {
             Text {
                 text: "Neuen Eintrag erstellen";
                 font-size: 30px;
-                height: 60px;
+                padding-bottom: 30px;
                 horizontal-alignment: center;
             }
 
@@ -60,14 +59,13 @@ export component AppWindow inherits Window {
                     password-input.text = "";
                 }
             }
-            
         }
         VerticalBox {
             width: 500px;
+            height: 500px;
             spacing: 30px;
             Text {
                 text: "Deine Passwörter";
-                padding-top: 30px;
                 font-size: 30px;
                 horizontal-alignment: center;
             }

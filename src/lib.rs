@@ -1,5 +1,3 @@
-#![windows_subsystem = "windows"]
-
 use std::{
     fs::File,
     io::Write,
