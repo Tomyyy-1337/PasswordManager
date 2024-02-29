@@ -5,65 +5,31 @@ export struct DataItem  {
     password: string,
 }
 
+import { CheckBox, StandardListView, StyleMetrics } from "std-widgets.slint";
+import { SideBar } from "./sidebar.slint";
+
 export component AppWindow inherits Window {
-    in property <[DataItem]> data_model: [];
+    in property <[DataItem]> data_model: [
+        {platform: "Facebook", password: "123456"},
+        {platform: "Instagram", password: "123456"}
+    ];
     callback add-to-database(string, string);
     callback copy-password-to-clipboard(string);
     callback delete-from-database(string);
-    title: "Passwort Manager";
-    HorizontalBox {
-        VerticalBox {
-            width: 450px;
-            alignment: center;
-            padding-right: 30px;
-            padding-left: 10px;
+    width: 1030px;
+    preferred-height: 500px;
+    title: @tr("Passwort Manager");
+
+    HorizontalLayout {
+        side-bar := SideBar {
+            title: @tr("Passwort Manager");
+            model: [@tr("Menu" => "Passwort Liste"), @tr("Menu" => "Neuen Eintrag erstellen")];
+        }        
+
+        if(side-bar.current-item == 0) : VerticalBox {
             spacing: 30px;
-            Text {
-                text: "Neuen Eintrag erstellen";
-                font-size: 30px;
-                padding-bottom: 30px;
-                horizontal-alignment: center;
-            }
-
-            platform_input := LineEdit {  
-                font-size: 14px;
-                height: 40px;
-                placeholder-text: "Name der Platform";
-            }
-
-            password_input := LineEdit {       
-                font-size: 14px;
-                height: 40px;
-                input-type: password;
-                placeholder-text: "Passwort";
-            }
-
-            CheckBox {
-                text: "Passwort anzeigen";
-                toggled => {
-                    if (self.checked) {
-                        password_input.input-type = InputType.text;
-                    } else {
-                        password_input.input-type = InputType.password;
-                    }
-                }
-            }
-
-            Button {
-                primary: true;
-                text: "Passwort speichern";
-                height: 60px;
-                clicked => {
-                    root.add_to_database(platform-input.text, password-input.text);
-                    platform-input.text = "";
-                    password-input.text = "";
-                }
-            }
-        }
-        VerticalBox {
-            width: 820px;
-            height: 500px;
-            spacing: 30px;
+            padding-top: 30px;
+            padding-left: 30px;
             Text {
                 text: "Deine Passwörter";
                 font-size: 30px;
@@ -84,10 +50,10 @@ export component AppWindow inherits Window {
                         pw_field := LineEdit {
                             width: 200px;
                             height: 40px;
+                            horizontal-alignment: center;
                             read-only: true;
                             text: item.password;
                             input-type: password;
-                            font-size: 14px;
                         }
                         pw_button := Button {
                             text: "Anzeigen"; 
@@ -127,7 +93,52 @@ export component AppWindow inherits Window {
                         }
                     }    
                 } 
-            }  
+            }
+        }
+        if(side-bar.current-item == 1) : VerticalBox {
+            alignment: center;
+            spacing: 30px;
+            padding-left: 200px;
+            padding-right: 200px;
+            Text {
+                text: "Neuen Eintrag erstellen";
+                font-size: 30px;
+                padding-bottom: 30px;
+                horizontal-alignment: center;
+            }
+    
+            platform_input := LineEdit {  
+                height: 40px;
+                placeholder-text: "Name der Platform";
+            }
+    
+            password_input := LineEdit {       
+                height: 40px;
+                input-type: password;
+                placeholder-text: "Passwort";
+            }
+    
+            CheckBox {
+                text: "Passwort anzeigen";
+                toggled => {
+                    if (self.checked) {
+                        password_input.input-type = InputType.text;
+                    } else {
+                        password_input.input-type = InputType.password;
+                    }
+                }
+            }
+    
+            Button {
+                primary: true;
+                text: "Passwort speichern";
+                height: 60px;
+                clicked => {
+                    root.add_to_database(platform-input.text, password-input.text);
+                    platform-input.text = "";
+                    password-input.text = "";
+                }
+            }
         }
     }
 }
