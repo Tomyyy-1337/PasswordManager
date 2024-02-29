@@ -61,7 +61,7 @@ export component AppWindow inherits Window {
             }
         }
         VerticalBox {
-            width: 500px;
+            width: 820px;
             height: 500px;
             spacing: 30px;
             Text {
@@ -76,9 +76,33 @@ export component AppWindow inherits Window {
                         spacing: 10px;
                         Text { 
                             width: 210px;
+                            height: 40px;
                             vertical-alignment: center;
                             text: item.platform;
                             font-size: 20px; 
+                        }
+                        pw_field := LineEdit {
+                            width: 200px;
+                            height: 40px;
+                            read-only: true;
+                            text: item.password;
+                            input-type: password;
+                            font-size: 14px;
+                        }
+                        pw_button := Button {
+                            text: "Anzeigen"; 
+                            width: 100px;
+                            height: 40px;
+                            primary: true;
+                            clicked => {
+                                if (pw_field.input-type == InputType.password) {
+                                    pw_field.input-type = InputType.text;
+                                    pw_button.text = "Verbergen";
+                                } else {
+                                    pw_field.input-type = InputType.password;
+                                    pw_button.text = "Anzeigen";
+                                }
+                            }
                         }
                         Button {
                             text: "Passwort kopieren"; 
@@ -103,7 +127,7 @@ export component AppWindow inherits Window {
                         }
                     }    
                 } 
-            }   
+            }  
         }
     }
 }
