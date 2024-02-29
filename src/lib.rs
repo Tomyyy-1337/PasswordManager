@@ -64,12 +64,18 @@ pub fn main() {
 fn read_from_file() -> Rc<slint::VecModel<DataItem>> {
     let mc = new_magic_crypt!("MyVerySecureKey", 256);
     let path = "data.txt";
-    let data_encrypted = std::fs::read_to_string(path).unwrap_or("".to_string());
-    let data = mc.decrypt_base64_to_string(&data_encrypted).unwrap_or("".to_string());
-    Rc::new(slint::VecModel::<DataItem>::from(data.lines()
-        .filter_map(|l| l.split_once("\r"))
-        .map(|(platform, password)| DataItem {platform: SharedString::from(platform), password: SharedString::from(password)})
-        .collect::<Vec<DataItem>>()))
+    match std::fs::read_to_string(path) {
+        Ok(data) => {
+            let data = mc.decrypt_base64_to_string(&data).unwrap();
+            Rc::new(slint::VecModel::<DataItem>::from(data.lines()
+                .filter_map(|l| l.split_once("\r"))
+                .map(|(platform, password)| DataItem {platform: SharedString::from(platform), password: SharedString::from(password)})
+                .collect::<Vec<DataItem>>()))
+        },
+        Err(_) => {
+            return Rc::new(slint::VecModel::<DataItem>::from(vec![]))
+        } 
+    }
 }
 
 fn write_to_file(data: Rc<slint::VecModel<DataItem>>) {

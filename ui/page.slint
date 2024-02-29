@@ -30,10 +30,14 @@ export component AppWindow inherits Window {
         if(side-bar.current-item == 0) : VerticalBox {
             spacing: 10px;
             padding-left: 30px;
-            Text {
-                text: "Deine Passwörter";
-                font-size: 30px;
-                horizontal-alignment: center;
+            VerticalBox {
+                alignment: center;
+                height: 50px;
+                Text {
+                    text: "Deine Passwörter";
+                    font-size: 30px;
+                    horizontal-alignment: center;
+                }
             }
             
             list-view := ListView {
