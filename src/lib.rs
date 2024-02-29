@@ -5,6 +5,9 @@ use std::{
 };
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
 
+extern crate directories;
+use directories::UserDirs;
+
 extern crate clipboard;
 
 use clipboard::ClipboardProvider;
@@ -62,8 +65,9 @@ pub fn main() {
 }
 
 fn read_from_file() -> Rc<slint::VecModel<DataItem>> {
+    let user_dirs = UserDirs::new().unwrap(); 
+    let path = user_dirs.document_dir().unwrap().to_str().unwrap().to_string() + "\\PasswordManager\\data.txt";
     let mc = new_magic_crypt!("MyVerySecureKey", 256);
-    let path = "data.txt";
     match std::fs::read_to_string(path) {
         Ok(data) => {
             let data = mc.decrypt_base64_to_string(&data).unwrap();
@@ -80,7 +84,12 @@ fn read_from_file() -> Rc<slint::VecModel<DataItem>> {
 
 fn write_to_file(data: Rc<slint::VecModel<DataItem>>) {
     let mc = new_magic_crypt!("MyVerySecureKey", 256);
-    if let Ok(mut file) = File::create("data.txt") {
+    let user_dirs = UserDirs::new().unwrap(); 
+    let path = user_dirs.document_dir().unwrap().to_str().unwrap().to_string() + "\\PasswordManager\\data.txt";
+    if let Err(e) = std::fs::create_dir_all(user_dirs.document_dir().unwrap().to_str().unwrap().to_string() + "\\PasswordManager") {
+        println!("Error creating directory: {}", e);
+    }
+    if let Ok(mut file) = File::create(path) {
         let string: String = data.iter().map(|d| {
             d.platform.to_string() + "\r" + &d.password + "\n"
         }).collect();
