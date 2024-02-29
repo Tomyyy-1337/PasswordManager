@@ -25,8 +25,10 @@ pub fn main() {
             if platform.is_empty() || password.is_empty() {
                 return;
             }
-            let indx = data_model.iter().position(| d | d.platform > platform).unwrap_or(data_model.row_count());
-            data_model.insert(indx, DataItem { platform, password });
+            let indx = data_model.iter()
+                .position(| d | d.platform.to_lowercase() > platform.to_lowercase())
+                .unwrap_or(data_model.row_count());
+            data_model.insert(indx, DataItem {platform: SharedString::from(platform), password: SharedString::from(password)});
             write_to_file(data_model.clone());
         }
     });
