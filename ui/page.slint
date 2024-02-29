@@ -6,6 +6,7 @@ export struct DataItem  {
 }
 
 import { CheckBox, StandardListView, StyleMetrics } from "std-widgets.slint";
+import { StandardTableView } from "std-widgets.slint";
 import { SideBar } from "./sidebar.slint";
 
 export component AppWindow inherits Window {
@@ -16,24 +17,25 @@ export component AppWindow inherits Window {
     callback add-to-database(string, string);
     callback copy-password-to-clipboard(string);
     callback delete-from-database(string);
+    callback clear-clipboard();
     width: 1030px;
-    preferred-height: 500px;
+    preferred-height: 600px;
     title: @tr("Passwort Manager");
 
     HorizontalLayout {
         side-bar := SideBar {
             model: [@tr("Menu" => "Passwort Liste"), @tr("Menu" => "Neuen Eintrag erstellen")];
-        }        
+        }  
 
         if(side-bar.current-item == 0) : VerticalBox {
-            spacing: 30px;
-            padding-top: 30px;
+            spacing: 10px;
             padding-left: 30px;
             Text {
                 text: "Deine Passwörter";
                 font-size: 30px;
                 horizontal-alignment: center;
             }
+            
             list-view := ListView {
                 for item in root.data_model: Rectangle {
                     height: 50px;
@@ -92,6 +94,18 @@ export component AppWindow inherits Window {
                         }
                     }    
                 } 
+            }
+            HorizontalBox {
+                alignment: center;
+                Button {
+                    text: "Zwischenablage leeren";
+                    primary: true;
+                    height: 40px;
+                    width: 200px;
+                    clicked => {
+                        root.clear-clipboard();
+                    }                
+                }
             }
         }
         if(side-bar.current-item == 1) : VerticalBox {

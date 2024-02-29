@@ -5,12 +5,15 @@ use std::{
 };
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
 
-extern crate copypasta;
-use copypasta::{ClipboardContext, ClipboardProvider};
+extern crate clipboard;
+
+use clipboard::ClipboardProvider;
+use clipboard::ClipboardContext;
 
 use slint::{Model, SharedString};
 
 slint::include_modules!();
+
 pub fn main() {
     let data_model = read_from_file();
 
@@ -22,18 +25,25 @@ pub fn main() {
             if platform.is_empty() || password.is_empty() {
                 return;
             }
-            data_model.push(DataItem { platform, password });
+            let indx = data_model.iter().position(| d | d.platform > platform).unwrap_or(data_model.row_count());
+            data_model.insert(indx, DataItem { platform, password });
             write_to_file(data_model.clone());
         }
     });
 
     ui.on_copy_password_to_clipboard({
         move |password| {
-            let mut ctx = ClipboardContext::new().unwrap();
+            let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
             ctx.set_contents(password.to_string()).unwrap();
         }
     });
-    
+
+    ui.on_clear_clipboard({
+        move || {
+            let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
+            ctx.set_contents("".to_string()).unwrap();
+        }
+    });    
 
     ui.on_delete_from_database({
         let data_model = data_model.clone();
